@@ -12,6 +12,17 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes iconBounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
         body {
             background: linear-gradient(to right, #1c92d2, #f2fcfe);
             font-family: 'Open Sans', sans-serif;
@@ -26,24 +37,25 @@
 
         .container {
             background: #fff;
-            padding: 40px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            width: 100%;
-            margin: 50px 0;
+            max-width: 800px;
+            width: 90%;
+            margin: 40px 0;
             animation: fadeIn 1.5s ease-in-out;
         }
 
         h1, h2 {
             color: #333;
             text-align: center;
-            margin: 10px 0;
+            animation: fadeIn 1.5s ease-in-out;
         }
 
         p, li {
             color: #333;
             line-height: 1.6;
+            animation: fadeIn 1.5s ease-in-out;
         }
 
         ul {
@@ -53,11 +65,18 @@
 
         ul li {
             margin-bottom: 10px;
+            animation: slideIn 1.5s ease-in-out;
         }
 
         .icon {
             margin-right: 10px;
             color: #007bff;
+            transition: transform 0.3s;
+        }
+
+        .icon:hover {
+            animation: iconBounce 0.6s;
+            cursor: pointer;
         }
 
         a {
@@ -73,11 +92,16 @@
 
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        header p {
+            margin: 5px 0;
         }
 
         section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         hr {
@@ -85,6 +109,31 @@
             height: 1px;
             background: #ddd;
             margin: 20px 0;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .fade-in {
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .fade-in ul li, .fade-in p, .fade-in h2 {
+            animation-delay: 0.5s;
+        }
+
+        .fade-in ul li:nth-child(2), .fade-in p:nth-child(2), .fade-in h2:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        .fade-in ul li:nth-child(3), .fade-in p:nth-child(3), .fade-in h2:nth-child(3) {
+            animation-delay: 1.5s;
+        }
+
+        .fade-in ul li:nth-child(4), .fade-in p:nth-child(4), .fade-in h2:nth-child(4) {
+            animation-delay: 2s;
+        }
+
+        .fade-in ul li:nth-child(5), .fade-in p:nth-child(5), .fade-in h2:nth-child(5) {
+            animation-delay: 2.5s;
         }
     </style>
 </head>
