@@ -334,14 +334,20 @@
     <p><strong>Proficient in</strong> English, Urdu.</p>
 </section>
 <hr>
-<!-- Download PDF Button -->
-<div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+<!-- Container for Visitor Counter & Download Button -->
+<div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+    <!-- Visitor Counter on the Left -->
+    <div id="visitor-container"></div>
+    <script src="visitor-counter.js"></script>
+
+    <!-- Download PDF Button on the Right -->
     <a href="https://drive.google.com/uc?export=download&id=1uw91UN3cqReoNrUm8OQmng0XB6YfJQEF" style="text-decoration: none;">
         <button style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
-        <div id="visitor-container"></div><script src="visitor-counter.js"></script><i class="fas fa-download"></i> Download PDF
+            <i class="fas fa-download"></i> Download PDF
         </button>
     </a>
 </div>
+
 
 <hr>
 </body>
