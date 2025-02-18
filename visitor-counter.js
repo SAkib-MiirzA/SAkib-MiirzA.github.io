@@ -1,6 +1,6 @@
 try {
     let img = document.createElement("img");
-    img.src = "https://hits.sh/sakib-miirza.github.io/SAqib-MUnir.xyz.svg?style=plastic&label=Visitor%20Counter";
+    img.src = "https://hits.sh/sakib-miirza.github.io.svg?style=plastic&label=Visitor%20Counter";
     img.alt = "Visitor Counter";
     document.getElementById("visitor-container").appendChild(img);
 } catch (error) {
