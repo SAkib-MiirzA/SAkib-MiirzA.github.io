@@ -35,13 +35,14 @@ pipeline {
         stage('🌐 Show Links') {
             steps {
                 script {
-                    def ip = sh(script: "hostname -I | awk '{print $1}'", returnStdout: true).trim()
+                    // Safe way to get IP (no awk, no $ issue)
+                    def ip = sh(script: "hostname -I", returnStdout: true).trim().split()[0]
 
                     echo "======================================"
                     echo "🌍 GitHub Pages:"
                     echo "https://SAkib-MiirzA.github.io/"
 
-                    echo "🖥️ Local Jenkins Preview (HTML Report):"
+                    echo "🖥️ Jenkins HTML Preview:"
                     echo "${env.BUILD_URL}HTML_20Report/"
 
                     echo "🌐 Server (if deployed):"
