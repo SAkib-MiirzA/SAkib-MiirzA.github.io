@@ -3,6 +3,7 @@ pipeline {
 
     parameters {
         choice(name: 'GIT_METHOD', choices: ['HTTPS', 'SSH'], description: 'Choose Git access method')
+        string(name: 'DEPLOY_BRANCH_NAME', defaultValue: 'gh-pages', description: 'Branch to deploy website')
     }
 
     environment {
@@ -37,24 +38,14 @@ pipeline {
                     env.REPO_URL = repoUrl
                     env.CRED_ID  = credId
 
-                    // Detect default branch
-                    def defaultBranch = sh(
-                        script: """
-                        git ls-remote --symref ${repoUrl} HEAD | awk '/^ref:/ {print \$2}' | sed 's|refs/heads/||'
-                        """,
-                        returnStdout: true
-                    ).trim()
-                    env.DEFAULT_BRANCH = defaultBranch ?: "main"
-
                     echo "Repo URL: ${repoUrl}"
-                    echo "Default Branch: ${env.DEFAULT_BRANCH}"
                 }
             }
         }
 
         stage('📂 Checkout Repo') {
             steps {
-                git branch: "${env.DEFAULT_BRANCH}", url: "${env.REPO_URL}", credentialsId: "${env.CRED_ID}"
+                git branch: 'main', url: "${env.REPO_URL}", credentialsId: "${env.CRED_ID}"
             }
         }
 
@@ -113,13 +104,15 @@ pipeline {
         stage('🚀 Deploy to Pages / Docs') {
             steps {
                 script {
-                    def deployBranch = env.IS_WEBSITE == "true" ?
-                                       (env.REPO_URL.contains("github.com") ? "gh-pages" : "pages") :
-                                       "docs"
+                    // Use either provided deploy branch or defaults
+                    def deployBranch = params.DEPLOY_BRANCH_NAME ?: (env.IS_WEBSITE == "true" ?
+                                           (env.REPO_URL.contains("github.com") ? "gh-pages" : "pages") :
+                                           "docs")
 
                     echo "Deploying to branch: ${deployBranch}"
 
                     dir(env.IS_WEBSITE == "true" ? env.DEPLOY_DIR : '.') {
+
                         if (params.GIT_METHOD == 'SSH') {
                             sh """
                             set -e
@@ -200,7 +193,7 @@ pipeline {
     }
 
     post {
-        failure { echo "❌ Pipeline failed! Check the logs." }
+        failure { echo "❌ Pipeline failed! Check logs." }
         success { echo "🎉 Pipeline succeeded!" }
     }
 }
