@@ -7,8 +7,8 @@ pipeline {
 
     environment {
         CRED_HTTPS = "repo-https"  // Jenkins credential ID for HTTPS (username+PAT)
-        CRED_SSH   = "repo-ssh"    // Jenkins credential ID for SSH key
-        DEPLOY_DIR = "site"        // Folder to prepare website files
+        CRED_SSH   = "repo-ssh"     // Jenkins credential ID for SSH key
+        DEPLOY_DIR = "site"         // Folder to prepare website files
         BUILD_TS   = "${new Date().format('yyyyMMdd-HHmmss')}"
     }
 
@@ -110,83 +110,71 @@ pipeline {
         stage('🚀 Deploy to Pages / Docs') {
             steps {
                 script {
-                    if (env.IS_WEBSITE == "true") {
-                        // Website deployment
-                        def branch = env.REPO_URL.contains("github.com") ? "gh-pages" :
-                                     env.REPO_URL.contains("gitlab.com") ? "pages" :
-                                     error("❌ Unsupported Git provider")
+                    def deployBranch = env.IS_WEBSITE == "true" ?
+                                       (env.REPO_URL.contains("github.com") ? "gh-pages" : "pages") :
+                                       "docs"
 
-                        echo "Deploying website to branch: ${branch}"
+                    echo "Deploying to branch: ${deployBranch}"
 
-                        dir("${env.DEPLOY_DIR}") {
-                            if (params.GIT_METHOD == 'SSH') {
+                    dir(env.IS_WEBSITE == "true" ? env.DEPLOY_DIR : '.') {
+
+                        if (params.GIT_METHOD == 'SSH') {
+                            sh '''
+                            set -e
+                            git init
+                            git remote remove origin || true
+                            git remote add origin ${REPO_URL}
+
+                            # Fetch branch if it exists
+                            git fetch origin ${deployBranch} || true
+
+                            # Checkout or create branch
+                            if git show-ref --verify --quiet refs/heads/${deployBranch}; then
+                                git checkout ${deployBranch}
+                            else
+                                git checkout -b ${deployBranch} || git checkout -b ${deployBranch} origin/${deployBranch}
+                            fi
+
+                            git config user.email "jenkins@local"
+                            git config user.name "Jenkins"
+
+                            git add .
+                            git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
+
+                            git push -f origin ${deployBranch}
+                            '''
+                        } else { // HTTPS
+                            withCredentials([usernamePassword(
+                                credentialsId: env.CRED_ID,
+                                usernameVariable: 'USER',
+                                passwordVariable: 'TOKEN'
+                            )]) {
                                 sh '''
                                 set -e
                                 git init
-                                git fetch origin || true
-                                git checkout ${branch} || git checkout -b ${branch} origin/${branch} || git checkout -b ${branch}
+                                git remote remove origin || true
+                                git remote add origin https://${USER}:${TOKEN}@${REPO_URL.replaceFirst('https://','')}
+
+                                git fetch origin ${deployBranch} || true
+
+                                if git show-ref --verify --quiet refs/heads/${deployBranch}; then
+                                    git checkout ${deployBranch}
+                                else
+                                    git checkout -b ${deployBranch} || git checkout -b ${deployBranch} origin/${deployBranch}
+                                fi
+
                                 git config user.email "jenkins@local"
                                 git config user.name "Jenkins"
+
                                 git add .
                                 git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
-                                git remote remove origin || true
-                                git remote add origin ${REPO_URL}
-                                git push -f origin ${branch}
-                                '''
-                            } else { // HTTPS
-                                withCredentials([usernamePassword(
-                                    credentialsId: env.CRED_ID,
-                                    usernameVariable: 'USER',
-                                    passwordVariable: 'TOKEN'
-                                )]) {
-                                    sh '''
-                                    set -e
-                                    git init
-                                    git fetch https://${USER}:${TOKEN}@${REPO_URL.replaceFirst('https://','')} || true
-                                    git checkout ${branch} || git checkout -b ${branch} origin/${branch} || git checkout -b ${branch}
-                                    git config user.email "jenkins@local"
-                                    git config user.name "Jenkins"
-                                    git add .
-                                    git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
-                                    git remote remove origin || true
-                                    git remote add origin https://${USER}:${TOKEN}@${REPO_URL.replaceFirst('https://','')}
-                                    git push -f origin ${branch}
-                                    '''
-                                }
-                            }
-                        }
-                    } else {
-                        // Non-website project - push docs or archive branch
-                        def branch = "docs"
-                        echo "Deploying non-website project to branch: ${branch}"
 
-                        dir('.') {
-                            if (params.GIT_METHOD == 'SSH') {
-                                sh '''
-                                set -e
-                                git checkout -b ${branch} || git checkout ${branch}
-                                git add .
-                                git commit -m "📦 Archive via Jenkins ${BUILD_TS}" || echo "No changes"
-                                git push -u origin ${branch} || git push origin ${branch}
+                                git push -f origin ${deployBranch}
                                 '''
-                            } else {
-                                withCredentials([usernamePassword(
-                                    credentialsId: env.CRED_ID,
-                                    usernameVariable: 'USER',
-                                    passwordVariable: 'TOKEN'
-                                )]) {
-                                    sh '''
-                                    set -e
-                                    git checkout -b ${branch} || git checkout ${branch}
-                                    git add .
-                                    git commit -m "📦 Archive via Jenkins ${BUILD_TS}" || echo "No changes"
-                                    git push https://${USER}:${TOKEN}@${REPO_URL.replaceFirst('https://','')} ${branch} || true
-                                    '''
-                                }
                             }
                         }
                     }
-                    echo "✅ Deployment/Archiving Done!"
+                    echo "✅ Deployment Done!"
                 }
             }
         }
