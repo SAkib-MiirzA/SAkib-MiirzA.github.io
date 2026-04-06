@@ -6,9 +6,9 @@ pipeline {
     }
 
     environment {
-        CRED_HTTPS = "repo-https"  // Jenkins credential ID for HTTPS (username+PAT)
-        CRED_SSH   = "repo-ssh"    // Jenkins credential ID for SSH key
-        DEPLOY_DIR = "site"        // Folder to prepare website files
+        CRED_HTTPS = "repo-https"
+        CRED_SSH   = "repo-ssh"
+        DEPLOY_DIR = "site"
     }
 
     stages {
@@ -20,7 +20,8 @@ pipeline {
                         error("❌ Jenkinsfile must be loaded from SCM!")
                     }
 
-                    // Set URL & credentials based on chosen method
+                    echo "Detected repo: ${env.GIT_URL}"
+
                     if (params.GIT_METHOD == 'HTTPS') {
                         repoUrl = env.GIT_URL.startsWith('git@') ?
                             env.GIT_URL.replaceFirst(/^git@(.*):(.*)$/, 'https://$1/$2') :
@@ -35,8 +36,6 @@ pipeline {
 
                     env.REPO_URL = repoUrl
                     env.CRED_ID  = credId
-
-                    echo "Repo URL: ${repoUrl}"
                 }
             }
         }
@@ -47,52 +46,55 @@ pipeline {
             }
         }
 
-        stage('🔍 Detect Project Type') {
-            steps {
-                script {
-                    if (fileExists('index.html')) {
-                        env.IS_WEBSITE = "true"
-                        echo "🌐 Website project detected"
-                    } else {
-                        env.IS_WEBSITE = "false"
-                        echo "📦 Non-website project detected"
-                    }
-                }
-            }
-        }
-
-        stage('📂 Prepare Website Files') {
-            when {
-                expression { return env.IS_WEBSITE == "true" }
-            }
+        stage('📂 Prepare Website Files (No rsync)') {
             steps {
                 sh '''
-                echo "Preparing website files..."
+                echo "Preparing site files..."
+
                 rm -rf ${DEPLOY_DIR}
                 mkdir ${DEPLOY_DIR}
 
-                # Copy all files except .git
+                # Copy normal files
                 cp -r * ${DEPLOY_DIR}/ 2>/dev/null || true
+
+                # Copy hidden files safely
                 for file in .*; do
                     if [ "$file" != "." ] && [ "$file" != ".." ] && [ "$file" != ".git" ]; then
                         cp -r "$file" ${DEPLOY_DIR}/ 2>/dev/null || true
                     fi
                 done
 
+                # Remove git folder if copied
                 rm -rf ${DEPLOY_DIR}/.git
-                echo "✅ Website files ready"
+
+                echo "✅ Files prepared:"
+                ls -la ${DEPLOY_DIR}
                 '''
+            }
+        }
+
+        stage('🌐 Detect Entry File') {
+            steps {
+                script {
+                    if (fileExists("${env.DEPLOY_DIR}/index.html")) {
+                        env.HTML_FILE = "index.html"
+                        echo "✅ index.html found"
+                    } else {
+                        env.HTML_FILE = ""
+                        echo "⚠️ No index.html found"
+                    }
+                }
             }
         }
 
         stage('🌍 Jenkins HTML Preview') {
             when {
-                expression { return env.IS_WEBSITE == "true" }
+                expression { return env.HTML_FILE != "" }
             }
             steps {
                 publishHTML([
                     reportDir: "${env.DEPLOY_DIR}",
-                    reportFiles: "index.html",
+                    reportFiles: "${env.HTML_FILE}",
                     reportName: 'Website Preview',
                     keepAll: true,
                     alwaysLinkToLastBuild: true,
@@ -102,13 +104,10 @@ pipeline {
         }
 
         stage('🚀 Deploy to Pages') {
-            when {
-                expression { return env.IS_WEBSITE == "true" }
-            }
             steps {
                 script {
-                    // Decide branch based on provider
                     def branch = ""
+
                     if (env.REPO_URL.contains("github.com")) {
                         branch = "gh-pages"
                     } else if (env.REPO_URL.contains("gitlab.com")) {
@@ -117,45 +116,36 @@ pipeline {
                         error("❌ Unsupported Git provider")
                     }
 
-                    echo "Deploying to branch: ${branch}"
+                    echo "Deploying to: ${branch}"
 
                     dir("${env.DEPLOY_DIR}") {
-                        if (params.GIT_METHOD == 'SSH') {
+                        withCredentials([usernamePassword(
+                            credentialsId: env.CRED_ID,
+                            usernameVariable: 'USER',
+                            passwordVariable: 'TOKEN'
+                        )]) {
+
                             sh """
                             git init
-                            git checkout -b ${branch} || git checkout ${branch}
+                            git checkout -b ${branch}
+
                             git config user.email "jenkins@local"
                             git config user.name "Jenkins"
+
                             git add .
-                            git commit -m "🚀 Auto deploy via Jenkins" || echo "No changes"
-                            git remote add origin ${env.REPO_URL} || true
-                            git push -f origin ${branch}
+                            git commit -m "🚀 Auto deploy from Jenkins" || echo "No changes"
+
+                            git push -f ${env.REPO_URL} ${branch}
                             """
-                        } else { // HTTPS
-                            withCredentials([usernamePassword(
-                                credentialsId: env.CRED_ID,
-                                usernameVariable: 'USER',
-                                passwordVariable: 'TOKEN'
-                            )]) {
-                                sh """
-                                git init
-                                git checkout -b ${branch} || git checkout ${branch}
-                                git config user.email "jenkins@local"
-                                git config user.name "Jenkins"
-                                git add .
-                                git commit -m "🚀 Auto deploy via Jenkins" || echo "No changes"
-                                git remote add origin https://${USER}:${TOKEN}@${env.REPO_URL.replaceFirst('https://', '')} || true
-                                git push -f origin ${branch}
-                                """
-                            }
                         }
                     }
+
                     echo "✅ Deployment Done!"
                 }
             }
         }
 
-        stage('📦 Archive All Files') {
+        stage('📦 Archive') {
             steps {
                 archiveArtifacts artifacts: '**/*', fingerprint: true
             }
@@ -163,7 +153,7 @@ pipeline {
 
         stage('🎉 Done') {
             steps {
-                echo "✅ Pipeline completed successfully!"
+                echo "✅ Full Website Pipeline Completed!"
             }
         }
     }
