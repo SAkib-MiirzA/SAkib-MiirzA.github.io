@@ -85,7 +85,17 @@ pipeline {
                 echo "Preparing website files..."
                 rm -rf ${DEPLOY_DIR}
                 mkdir ${DEPLOY_DIR}
-                rsync -av --exclude='.git' ./ ${DEPLOY_DIR}/
+
+                # Copy all normal files
+                cp -r * ${DEPLOY_DIR}/ 2>/dev/null || true
+
+                # Copy hidden files except .git
+                for file in .*; do
+                    if [ "$file" != "." ] && [ "$file" != ".." ] && [ "$file" != ".git" ]; then
+                        cp -r "$file" ${DEPLOY_DIR}/ 2>/dev/null || true
+                    fi
+                done
+
                 echo "✅ Website files ready in ${DEPLOY_DIR}"
                 '''
             }
@@ -125,10 +135,8 @@ pipeline {
                             git remote remove origin || true
                             git remote add origin ${REPO_URL}
 
-                            # Fetch branch if it exists
                             git fetch origin ${deployBranch} || true
 
-                            # Checkout or create branch
                             if git show-ref --verify --quiet refs/heads/${deployBranch}; then
                                 git checkout ${deployBranch}
                             else
