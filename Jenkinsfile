@@ -6,9 +6,9 @@ pipeline {
     }
 
     environment {
-        CRED_HTTPS = "repo-https"  // Jenkins credential ID for HTTPS (username+PAT)
-        CRED_SSH   = "repo-ssh"     // Jenkins credential ID for SSH key
-        DEPLOY_DIR = "site"         // Folder to prepare website files
+        CRED_HTTPS = "repo-https"  // Jenkins credential ID for HTTPS
+        CRED_SSH   = "repo-ssh"     // Jenkins credential ID for SSH
+        DEPLOY_DIR = "site"         // Website folder
         BUILD_TS   = "${new Date().format('yyyyMMdd-HHmmss')}"
     }
 
@@ -54,10 +54,7 @@ pipeline {
 
         stage('📂 Checkout Repo') {
             steps {
-                script {
-                    echo "Checking out branch: ${env.DEFAULT_BRANCH}"
-                    git branch: "${env.DEFAULT_BRANCH}", url: "${env.REPO_URL}", credentialsId: "${env.CRED_ID}"
-                }
+                git branch: "${env.DEFAULT_BRANCH}", url: "${env.REPO_URL}", credentialsId: "${env.CRED_ID}"
             }
         }
 
@@ -76,9 +73,7 @@ pipeline {
         }
 
         stage('📂 Prepare Website Files') {
-            when {
-                expression { return env.IS_WEBSITE == "true" }
-            }
+            when { expression { env.IS_WEBSITE == "true" } }
             steps {
                 sh """
                 set -e
@@ -102,9 +97,7 @@ pipeline {
         }
 
         stage('🌍 Jenkins HTML Preview') {
-            when {
-                expression { return env.IS_WEBSITE == "true" }
-            }
+            when { expression { env.IS_WEBSITE == "true" } }
             steps {
                 publishHTML([
                     reportDir: "${DEPLOY_DIR}",
@@ -127,20 +120,22 @@ pipeline {
                     echo "Deploying to branch: ${deployBranch}"
 
                     dir(env.IS_WEBSITE == "true" ? env.DEPLOY_DIR : '.') {
-
                         if (params.GIT_METHOD == 'SSH') {
                             sh """
                             set -e
+                            DEPLOY_BRANCH=${deployBranch}
+                            REPO=${env.REPO_URL}
+
                             git init
                             git remote remove origin || true
-                            git remote add origin ${env.REPO_URL}
+                            git remote add origin \$REPO
 
-                            git fetch origin ${deployBranch} || true
+                            git fetch origin \$DEPLOY_BRANCH || true
 
-                            if git show-ref --verify --quiet refs/heads/${deployBranch}; then
-                                git checkout ${deployBranch}
+                            if git show-ref --verify --quiet refs/heads/\$DEPLOY_BRANCH; then
+                                git checkout \$DEPLOY_BRANCH
                             else
-                                git checkout -b ${deployBranch} || git checkout -b ${deployBranch} origin/${deployBranch}
+                                git checkout -b \$DEPLOY_BRANCH || git checkout -b \$DEPLOY_BRANCH origin/\$DEPLOY_BRANCH
                             fi
 
                             git config user.email "jenkins@local"
@@ -149,7 +144,7 @@ pipeline {
                             git add .
                             git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
 
-                            git push -f origin ${deployBranch}
+                            git push -f origin \$DEPLOY_BRANCH
                             """
                         } else { // HTTPS
                             withCredentials([usernamePassword(
@@ -159,16 +154,19 @@ pipeline {
                             )]) {
                                 sh """
                                 set -e
+                                DEPLOY_BRANCH=${deployBranch}
+                                REPO=${env.REPO_URL}
+
                                 git init
                                 git remote remove origin || true
-                                git remote add origin https://${USER}:${TOKEN}@${env.REPO_URL.replaceFirst('https://','')}
+                                git remote add origin https://\${USER}:\${TOKEN}@\${REPO.replaceFirst('https://','')}
 
-                                git fetch origin ${deployBranch} || true
+                                git fetch origin \$DEPLOY_BRANCH || true
 
-                                if git show-ref --verify --quiet refs/heads/${deployBranch}; then
-                                    git checkout ${deployBranch}
+                                if git show-ref --verify --quiet refs/heads/\$DEPLOY_BRANCH; then
+                                    git checkout \$DEPLOY_BRANCH
                                 else
-                                    git checkout -b ${deployBranch} || git checkout -b ${deployBranch} origin/${deployBranch}
+                                    git checkout -b \$DEPLOY_BRANCH || git checkout -b \$DEPLOY_BRANCH origin/\$DEPLOY_BRANCH
                                 fi
 
                                 git config user.email "jenkins@local"
@@ -177,11 +175,12 @@ pipeline {
                                 git add .
                                 git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
 
-                                git push -f origin ${deployBranch}
+                                git push -f origin \$DEPLOY_BRANCH
                                 """
                             }
                         }
                     }
+
                     echo "✅ Deployment Done!"
                 }
             }
@@ -201,11 +200,7 @@ pipeline {
     }
 
     post {
-        failure {
-            echo "❌ Pipeline failed! Check the logs for details."
-        }
-        success {
-            echo "🎉 Pipeline succeeded!"
-        }
+        failure { echo "❌ Pipeline failed! Check the logs." }
+        success { echo "🎉 Pipeline succeeded!" }
     }
 }
