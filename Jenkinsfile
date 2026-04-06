@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         USER_NAME = "SAkib"
-        REPO_URL = "https://github.com/SAkib-MiirzA/SAkib-MiirzA.github.io.git"
+        REPO_URL = "git@github.com:SAkib-MiirzA/SAkib-MiirzA.github.io.git"
     }
 
     stages {
@@ -11,8 +11,8 @@ pipeline {
         stage('📥 Checkout CV Repo') {
             steps {
                 git branch: 'main',
-                url: "${REPO_URL}",
-                credentialsId: 'github-jenkins-pat' // remove if repo is public
+                    url: "${REPO_URL}",
+                    credentialsId: 'github-ssh' // use the SSH credentials added in Jenkins
             }
         }
 
@@ -35,8 +35,8 @@ pipeline {
         stage('🌐 Show Links') {
             steps {
                 script {
-                    // Safe way to get IP (no awk, no $ issue)
-                    def ip = sh(script: "hostname -I", returnStdout: true).trim().split()[0]
+                    // Safe way to get server IP (avoid Groovy $ issues)
+                    def ip = sh(script: "hostname -I | awk '{print \$1}'", returnStdout: true).trim()
 
                     echo "======================================"
                     echo "🌍 GitHub Pages:"
