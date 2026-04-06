@@ -80,7 +80,7 @@ pipeline {
                 expression { return env.IS_WEBSITE == "true" }
             }
             steps {
-                sh '''
+                sh """
                 set -e
                 echo "Preparing website files..."
                 rm -rf ${DEPLOY_DIR}
@@ -91,13 +91,13 @@ pipeline {
 
                 # Copy hidden files except .git
                 for file in .*; do
-                    if [ "$file" != "." ] && [ "$file" != ".." ] && [ "$file" != ".git" ]; then
-                        cp -r "$file" ${DEPLOY_DIR}/ 2>/dev/null || true
+                    if [ "\$file" != "." ] && [ "\$file" != ".." ] && [ "\$file" != ".git" ]; then
+                        cp -r "\$file" ${DEPLOY_DIR}/ 2>/dev/null || true
                     fi
                 done
 
                 echo "✅ Website files ready in ${DEPLOY_DIR}"
-                '''
+                """
             }
         }
 
@@ -107,7 +107,7 @@ pipeline {
             }
             steps {
                 publishHTML([
-                    reportDir: "${env.DEPLOY_DIR}",
+                    reportDir: "${DEPLOY_DIR}",
                     reportFiles: "index.html",
                     reportName: 'Website Preview',
                     keepAll: true,
@@ -129,11 +129,11 @@ pipeline {
                     dir(env.IS_WEBSITE == "true" ? env.DEPLOY_DIR : '.') {
 
                         if (params.GIT_METHOD == 'SSH') {
-                            sh '''
+                            sh """
                             set -e
                             git init
                             git remote remove origin || true
-                            git remote add origin ${REPO_URL}
+                            git remote add origin ${env.REPO_URL}
 
                             git fetch origin ${deployBranch} || true
 
@@ -150,18 +150,18 @@ pipeline {
                             git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
 
                             git push -f origin ${deployBranch}
-                            '''
+                            """
                         } else { // HTTPS
                             withCredentials([usernamePassword(
                                 credentialsId: env.CRED_ID,
                                 usernameVariable: 'USER',
                                 passwordVariable: 'TOKEN'
                             )]) {
-                                sh '''
+                                sh """
                                 set -e
                                 git init
                                 git remote remove origin || true
-                                git remote add origin https://${USER}:${TOKEN}@${REPO_URL.replaceFirst('https://','')}
+                                git remote add origin https://${USER}:${TOKEN}@${env.REPO_URL.replaceFirst('https://','')}
 
                                 git fetch origin ${deployBranch} || true
 
@@ -178,7 +178,7 @@ pipeline {
                                 git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
 
                                 git push -f origin ${deployBranch}
-                                '''
+                                """
                             }
                         }
                     }
