@@ -12,7 +12,7 @@ pipeline {
             steps {
                 git branch: 'main',
                 url: "${REPO_URL}",
-                credentialsId: 'github-jenkins-pat' // optional if repo is private
+                credentialsId: 'github-jenkins-pat' // remove if repo is public
             }
         }
 
@@ -32,10 +32,35 @@ pipeline {
             }
         }
 
-        stage('🌐 Preview Info') {
+        stage('🌐 Show Links') {
             steps {
-                echo "Your CV site is available at:"
-                echo "https://SAkib-MiirzA.github.io/"
+                script {
+                    def ip = sh(script: "hostname -I | awk '{print $1}'", returnStdout: true).trim()
+
+                    echo "======================================"
+                    echo "🌍 GitHub Pages:"
+                    echo "https://SAkib-MiirzA.github.io/"
+
+                    echo "🖥️ Local Jenkins Preview (HTML Report):"
+                    echo "${env.BUILD_URL}HTML_20Report/"
+
+                    echo "🌐 Server (if deployed):"
+                    echo "http://${ip}"
+                    echo "======================================"
+                }
+            }
+        }
+
+        stage('🌍 Publish HTML Report') {
+            steps {
+                publishHTML([
+                    reportDir: '.',
+                    reportFiles: 'index.html',
+                    reportName: 'HTML Report',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true,
+                    allowMissing: false
+                ])
             }
         }
 
