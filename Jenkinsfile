@@ -20,7 +20,6 @@ pipeline {
                         error("❌ Jenkinsfile must be loaded from SCM!")
                     }
 
-                    // Set URL & credentials based on chosen method
                     if (params.GIT_METHOD == 'HTTPS') {
                         repoUrl = env.GIT_URL.startsWith('git@') ?
                             env.GIT_URL.replaceFirst(/^git@(.*):(.*)$/, 'https://$1/$2') :
@@ -62,9 +61,7 @@ pipeline {
         }
 
         stage('📂 Prepare Website Files') {
-            when {
-                expression { return env.IS_WEBSITE == "true" }
-            }
+            when { expression { return env.IS_WEBSITE == "true" } }
             steps {
                 sh '''
                 echo "Preparing website files..."
@@ -86,9 +83,7 @@ pipeline {
         }
 
         stage('🌍 Jenkins HTML Preview') {
-            when {
-                expression { return env.IS_WEBSITE == "true" }
-            }
+            when { expression { return env.IS_WEBSITE == "true" } }
             steps {
                 publishHTML([
                     reportDir: "${env.DEPLOY_DIR}",
@@ -102,11 +97,9 @@ pipeline {
         }
 
         stage('🚀 Deploy to Pages (SKIPPED)') {
-            when {
-                expression { return false } // Always skip to avoid failure
-            }
+            when { expression { return false } }  // Disabled to avoid failure
             steps {
-                echo "⚠️ Deployment skipped to avoid errors"
+                echo "⚠️ Deployment skipped to avoid errors (no branch created)"
             }
         }
 
