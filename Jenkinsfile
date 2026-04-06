@@ -3,32 +3,30 @@ pipeline {
 
     parameters {
         choice(name: 'GIT_METHOD', choices: ['HTTPS', 'SSH'], description: 'Choose Git access method')
-        string(name: 'DEPLOY_BRANCH_NAME', defaultValue: 'gh-pages', description: 'Branch to deploy website')
     }
 
     environment {
-        CRED_HTTPS = "repo-https"  // Jenkins credential ID for HTTPS
-        CRED_SSH   = "repo-ssh"     // Jenkins credential ID for SSH
-        DEPLOY_DIR = "site"         // Website folder
-        BUILD_TS   = "${new Date().format('yyyyMMdd-HHmmss')}"
+        CRED_HTTPS = "repo-https"  // Jenkins credential ID for HTTPS (username+PAT)
+        CRED_SSH   = "repo-ssh"    // Jenkins credential ID for SSH key
+        DEPLOY_DIR = "site"        // Folder to prepare website files
     }
 
     stages {
 
-        stage('📥 Detect Repo URL & Branch') {
+        stage('📥 Detect Repo URL') {
             steps {
                 script {
                     if (!env.GIT_URL) {
                         error("❌ Jenkinsfile must be loaded from SCM!")
                     }
 
-                    // Determine credentials and URL format
+                    // Set URL & credentials based on chosen method
                     if (params.GIT_METHOD == 'HTTPS') {
                         repoUrl = env.GIT_URL.startsWith('git@') ?
                             env.GIT_URL.replaceFirst(/^git@(.*):(.*)$/, 'https://$1/$2') :
                             env.GIT_URL
                         credId = env.CRED_HTTPS
-                    } else { // SSH
+                    } else {
                         repoUrl = env.GIT_URL.startsWith('https://') ?
                             env.GIT_URL.replaceFirst(/^https:\\/\\/(.*)\\/(.*)\\.git$/, 'git@$1:$2.git') :
                             env.GIT_URL
@@ -64,34 +62,36 @@ pipeline {
         }
 
         stage('📂 Prepare Website Files') {
-            when { expression { env.IS_WEBSITE == "true" } }
+            when {
+                expression { return env.IS_WEBSITE == "true" }
+            }
             steps {
-                sh """
-                set -e
+                sh '''
                 echo "Preparing website files..."
                 rm -rf ${DEPLOY_DIR}
                 mkdir ${DEPLOY_DIR}
 
-                # Copy all normal files
+                # Copy all files except .git
                 cp -r * ${DEPLOY_DIR}/ 2>/dev/null || true
-
-                # Copy hidden files except .git
                 for file in .*; do
-                    if [ "\$file" != "." ] && [ "\$file" != ".." ] && [ "\$file" != ".git" ]; then
-                        cp -r "\$file" ${DEPLOY_DIR}/ 2>/dev/null || true
+                    if [ "$file" != "." ] && [ "$file" != ".." ] && [ "$file" != ".git" ]; then
+                        cp -r "$file" ${DEPLOY_DIR}/ 2>/dev/null || true
                     fi
                 done
 
-                echo "✅ Website files ready in ${DEPLOY_DIR}"
-                """
+                rm -rf ${DEPLOY_DIR}/.git
+                echo "✅ Website files ready"
+                '''
             }
         }
 
         stage('🌍 Jenkins HTML Preview') {
-            when { expression { env.IS_WEBSITE == "true" } }
+            when {
+                expression { return env.IS_WEBSITE == "true" }
+            }
             steps {
                 publishHTML([
-                    reportDir: "${DEPLOY_DIR}",
+                    reportDir: "${env.DEPLOY_DIR}",
                     reportFiles: "index.html",
                     reportName: 'Website Preview',
                     keepAll: true,
@@ -101,43 +101,35 @@ pipeline {
             }
         }
 
-        stage('🚀 Deploy to Pages / Docs') {
+        stage('🚀 Deploy to Pages') {
+            when {
+                expression { return env.IS_WEBSITE == "true" }
+            }
             steps {
                 script {
-                    // Use either provided deploy branch or defaults
-                    def deployBranch = params.DEPLOY_BRANCH_NAME ?: (env.IS_WEBSITE == "true" ?
-                                           (env.REPO_URL.contains("github.com") ? "gh-pages" : "pages") :
-                                           "docs")
+                    // Decide branch based on provider
+                    def branch = ""
+                    if (env.REPO_URL.contains("github.com")) {
+                        branch = "gh-pages"
+                    } else if (env.REPO_URL.contains("gitlab.com")) {
+                        branch = "pages"
+                    } else {
+                        error("❌ Unsupported Git provider")
+                    }
 
-                    echo "Deploying to branch: ${deployBranch}"
+                    echo "Deploying to branch: ${branch}"
 
-                    dir(env.IS_WEBSITE == "true" ? env.DEPLOY_DIR : '.') {
-
+                    dir("${env.DEPLOY_DIR}") {
                         if (params.GIT_METHOD == 'SSH') {
                             sh """
-                            set -e
-                            DEPLOY_BRANCH=${deployBranch}
-                            REPO=${env.REPO_URL}
-
                             git init
-                            git remote remove origin || true
-                            git remote add origin \$REPO
-
-                            git fetch origin \$DEPLOY_BRANCH || true
-
-                            if git show-ref --verify --quiet refs/heads/\$DEPLOY_BRANCH; then
-                                git checkout \$DEPLOY_BRANCH
-                            else
-                                git checkout -b \$DEPLOY_BRANCH || git checkout -b \$DEPLOY_BRANCH origin/\$DEPLOY_BRANCH
-                            fi
-
+                            git checkout -b ${branch} || git checkout ${branch}
                             git config user.email "jenkins@local"
                             git config user.name "Jenkins"
-
                             git add .
-                            git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
-
-                            git push -f origin \$DEPLOY_BRANCH
+                            git commit -m "🚀 Auto deploy via Jenkins" || echo "No changes"
+                            git remote add origin ${env.REPO_URL} || true
+                            git push -f origin ${branch}
                             """
                         } else { // HTTPS
                             withCredentials([usernamePassword(
@@ -146,34 +138,18 @@ pipeline {
                                 passwordVariable: 'TOKEN'
                             )]) {
                                 sh """
-                                set -e
-                                DEPLOY_BRANCH=${deployBranch}
-                                REPO=${env.REPO_URL}
-
                                 git init
-                                git remote remove origin || true
-                                git remote add origin https://\${USER}:\${TOKEN}@\${REPO.replaceFirst('https://','')}
-
-                                git fetch origin \$DEPLOY_BRANCH || true
-
-                                if git show-ref --verify --quiet refs/heads/\$DEPLOY_BRANCH; then
-                                    git checkout \$DEPLOY_BRANCH
-                                else
-                                    git checkout -b \$DEPLOY_BRANCH || git checkout -b \$DEPLOY_BRANCH origin/\$DEPLOY_BRANCH
-                                fi
-
+                                git checkout -b ${branch} || git checkout ${branch}
                                 git config user.email "jenkins@local"
                                 git config user.name "Jenkins"
-
                                 git add .
-                                git commit -m "🚀 Auto deploy via Jenkins ${BUILD_TS}" || echo "No changes"
-
-                                git push -f origin \$DEPLOY_BRANCH
+                                git commit -m "🚀 Auto deploy via Jenkins" || echo "No changes"
+                                git remote add origin https://${USER}:${TOKEN}@${env.REPO_URL.replaceFirst('https://', '')} || true
+                                git push -f origin ${branch}
                                 """
                             }
                         }
                     }
-
                     echo "✅ Deployment Done!"
                 }
             }
@@ -190,10 +166,5 @@ pipeline {
                 echo "✅ Pipeline completed successfully!"
             }
         }
-    }
-
-    post {
-        failure { echo "❌ Pipeline failed! Check logs." }
-        success { echo "🎉 Pipeline succeeded!" }
     }
 }
