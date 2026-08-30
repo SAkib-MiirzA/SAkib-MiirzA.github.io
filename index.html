@@ -1,0 +1,956 @@
+ <!DOCTYPE html>
+<!--[if lt IE 8 ]><html class="no-js ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="no-js ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 8)|!(IE)]><!--><html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    
+
+   <!--- Basic Page Needs
+   ================================================== -->
+   <meta charset="utf-8">
+	<title>SAkib MirzA..!</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+   <!-- Mobile Specific Metas
+   ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+    ================================================== -->
+   <link rel="stylesheet" href="css/default.css">
+	<link rel="stylesheet" href="css/layout.css">
+   <link rel="stylesheet" href="css/media-queries.css">
+   <link rel="stylesheet" href="css/magnific-popup.css">
+
+   <!-- Script
+   ================================================== -->
+	<script src="js/modernizr.js"></script>
+
+   <!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="OpsOura.png" >
+
+</head>
+
+  <!-- Header
+   ================================================== -->
+   <header id="home">
+
+    <nav id="nav-wrap">
+
+       <a class="mobile-btn" href="#nav-wrap" title="Show navigation">Show navigation</a>
+        <a class="mobile-btn" href="#" title="Hide navigation">Hide navigation</a>
+
+       <ul id="nav" class="nav">
+          <li class="current"><a class="smoothscroll" href="#home">Home</a></li>
+          <li><a class="smoothscroll" href="#about">About</a></li>
+           <li><a class="smoothscroll" href="#resume">Resume</a></li>
+           <li><a class="smoothscroll" href="#skills">Skills</a></li>
+           <li><a class="smoothscroll" href="#Education">Education</a></li>
+           <li><a class="smoothscroll" href="#portfolio">Works</a></li>
+           <li><a class="smoothscroll" href="#testimonials">Testimonials</a></li>
+           <!-- <li><a class="smoothscroll" href="#contact">Contact</a></li> -->
+           <style>
+            /* Set orange color for all links */
+            #nav a {
+              color: orange;
+              transition: color 0.3s ease;
+            }
+          
+            /* Permanently set the Home link to orange */
+            .home-link {
+              color: orange !important;
+            }
+          
+            /* Keep other links in orange but allow hover effect */
+            #nav a:hover {
+              color: darkorange;
+            }
+          
+            /* Additional smooth transition effects */
+            .smoothscroll {
+              scroll-behavior: smooth;
+            }
+          
+            /* Make sure other parts of the HTML remain undisturbed */
+            body {
+              margin: 0;
+              padding: 0;
+              font-family: Arial, sans-serif;
+            }
+          </style>
+
+</nav> <!-- end #nav-wrap -->
+
+<div class="row banner">
+    <div class="banner-text">
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                .fade-left {
+                    opacity: 0;
+                    transform: translateX(-100%);
+                    animation: fadeInLeft 1.5s forwards; /* Increased to 1.5 seconds */
+                    animation-delay: 0.3s; /* Added delay for smoother start */
+                }
+
+                .fade-right {
+                    opacity: 0;
+                    transform: translateX(100%);
+                    animation: fadeInRight 1.5s forwards; /* Increased to 1.5 seconds */
+                    animation-delay: 0.3s; /* Added delay for smoother start */
+                }
+
+                @keyframes fadeInLeft {
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                @keyframes fadeInRight {
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                .responsive-headline {
+                    font-size: 2.5em;
+                }
+
+                h3 {
+                    font-size: 1.5em;
+                    margin-top: 20px;
+                }
+
+                a.smoothscroll {
+                    color: rgb(255, 166, 0);
+                    text-decoration: none;
+                }
+            </style>
+        </head>
+        <body>
+            <h1 class="responsive-headline fade-left">Hi, I'm <span style="color: rgb(0, 255, 115);">SAqib MUnir<span style="color: #ffffff;">..ツ.</h1>
+            <h3 class="fade-right">
+                I am an enthusiastic <span>DevOps Engineer</span>, <span>with a solid foundation in</span> DevOps principles
+                and hands-on experience with essential tools and technologies.
+                Let's <a class="smoothscroll" href="#about">start scrolling</a>
+                and learn more <a class="smoothscroll" href="#about">about me</a>.
+            </h3>
+        </body>
+        </html>
+
+        <hr />
+
+<!-- Visitor Counter -->  
+    <div class="visitor_counter">
+        <span>This page has been viewed 
+        <span id="visitor_count" style="color: #10c3ff; opacity: 0; transition: opacity 1.5s ease-in-out;">0000</span> 
+        times <span style="color: #10c3ff;">..💬</span>
+        </span>
+    </div>
+    
+    <script>
+        async function getVisitorCount() {
+            try {
+                // Fetch the visitor count from your Azure Function
+                // const response = await fetch('https://sakib-func.azurewebsites.net/api/http_triggersakib?code=8dCbJVy0Epj2pNbotF4L1aTWttpJ2b9mejxBd5RtFhhJAzFu_Z56fQ%3D%3D');
+
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+
+                // Parse the visitor count as text
+                const visitorCount = await response.text();
+                return visitorCount;
+            } catch (error) {
+                console.error('Error fetching visitor count:', error);
+                return null;
+            }
+        }
+
+        async function updateVisitorCount() {
+            const currentCount = await getVisitorCount();
+            const visitorCountElement = document.getElementById('visitor_count');
+            if (currentCount !== null) {
+                visitorCountElement.innerText = currentCount;
+            } else {
+                visitorCountElement.innerText = '1576';
+            }
+            // Trigger the fade-in effect
+            visitorCountElement.style.opacity = '1';
+        }
+
+        // Call this function on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateVisitorCount();
+        });
+    </script>
+
+  </script>
+            <ul class="social">
+               <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+               <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+               <li><a href="https://www.linkedin.com/in/saqib-muniir/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+               <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+               <li><a href="https://github.com/SAkib-MiirzA" target="_blank"><i class="fa fa-github"></i></a></li>
+               <li><a href="#"><i class="fa fa-skype"></i></a></li>
+            </ul>
+         </div>
+      </div>
+<body>
+      <p class="scrolldown">
+         <a class="smoothscroll" href="#about"><i class="icon-down-circle"></i></a>
+      </p>
+
+   </header> <!-- Header End -->
+
+
+<!-- About Section
+================================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume</title>
+    <link rel="stylesheet" href="styles.css"> <!-- You can link your CSS here -->
+    <style>
+        /* CSS for animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Adjusting image size for animation */
+        .profile-pic {
+            transition: transform 0.6s ease-out;
+        }
+
+        .profile-pic.animate {
+            transform: scale(1.1);
+        }
+
+        /* Download button styling */
+        .download-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-btn i {
+            margin-right: 8px;
+        }
+
+        /* Align download button to the right */
+        .download-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- About Section
+    ================================================== -->       
+    <section id="about">
+
+        <div class="row">
+
+            <div class="three columns">
+                <img class="profile-pic fade-in" src="images/profilepic.jpg" alt="" style="width: 300%; height: auto; margin-left: -35px;" />
+            </div>
+
+            <div class="nine columns main-col">
+                <h2 class="fade-in">About Me</h2>
+                <p class="fade-in">As a passionate DevOps Engineer, I specialize in optimizing workflows, improving system reliability, 
+                    and ensuring seamless integration across platforms. My expertise lies in driving efficient deployments 
+                    while continuously enhancing processes for maximum operational performance.
+                </p>
+
+                <div class="row">
+                    <div class="columns contact-details">
+                        <h2 class="fade-in">Contact Details</h2>
+                        <p class="address fade-in">
+                            <span>SAQIB MUNIR</span><br>
+                            <span>Gujrat, Punjab, Pakistan<br>
+                            <span>+923006283898</span>
+                            </span>sakib00786@gmail.com<br>
+                        </p>
+                    </div>
+                </div> <!-- end row -->
+
+            <!-- Download PDF Button -->
+            <div style="margin-top: 10px; display: flex; justify-content: flex-end; position: relative; top: -10px;">
+                <a href="https://drive.google.com/uc?export=download&id=1uw91UN3cqReoNrUm8OQmng0XB6YfJQEF" style="text-decoration: none;">
+                    <button style="background-color: #2d3135; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                </a>
+            </div>
+
+    </section> <!-- About Section End-->
+
+    <script>
+        // JavaScript for triggering animations on scroll
+        document.addEventListener("DOMContentLoaded", function() {
+            const elements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        entry.target.classList.add('animate');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+
+            // Animate the profile picture separately
+            const profilePic = document.querySelector('.profile-pic');
+            observer.observe(profilePic);
+        });
+    </script>
+
+</body>
+
+   <!-- Resume Section
+   ================================================== -->
+   <section id="resume">
+
+      <style>
+         .job-title {
+           font-size: 24px !important;
+           font-weight: bold;
+         }
+       </style>
+       
+       <section id="resume">
+         <div class="row experience">
+           <div class="three columns header-col">
+
+            <h1><span>&#x1F4BB; Work Experience</span></h1>
+
+           </div>
+
+           <div class="nine columns main-col" style="display: flex; align-items: flex-start;">
+            <div style="flex: 1;">
+                <h3 class="job-title">OpsOura</h3>
+        
+                <h4 class="job-title" style="font-size: 16px !important;">DevOps Engineer | Lead of The SRE Team</h4>
+                <p><em>Oct 2024 – Present</em></p>
+        
+                <h4 class="job-title" style="font-size: 16px !important;">Associate DevOps Engineer</h4>
+                <p><em>June 2024 – Oct 2024</em></p>
+            </div>
+            <div style="flex: 0 0 auto; margin-left: 20px;">
+                <img src="OpsOura.png" alt="OpsOura Logo" style="max-width: 150px; height: auto; margin-top: -10px;">
+            </div>
+        </div>
+        
+            
+<div style="color: rgb(95, 95, 95);">
+<h3 style="font-size: 18px; color: #333; font-weight: bold;">DevOps Engineer | Lead of the SRE Team</h3>
+                <p><em>Oct 2024 – Present</em></p>
+<ul style="list-style-type: square; padding-left: 20px;">
+    <li><strong>SRE Leadership in DevOps:</strong> Led Site Reliability Engineering (SRE) initiatives, advancing operational efficiency and ensuring high service reliability within the DevOps team.</li>
+    <li><strong>Monitoring and Security Integration:</strong> Integrated advanced monitoring and security tools like <em>Datadog</em> and <em>Sensu</em>, achieving comprehensive system observability and responsive alerting.</li>
+    <li><strong>Automated Deployments with ArgoCD:</strong> Spearheaded application deployment automation using <em>ArgoCD</em>, significantly enhancing deployment speed, reliability, and consistency across varied environments.</li>
+    <li><strong>Application Deployment Excellence:</strong> Deployed both containerized and traditional applications, optimizing for scalability and operational efficiency.</li>
+    <li><strong>MLOps and LLM Implementation:</strong> Initiated work in MLOps and large language models (LLMs), successfully implementing Ollama with Gradio to streamline machine learning workflows and user interaction capabilities.</li>
+    <li><strong>Infrastructure Automation with Terraform:</strong> Leveraged Terraform for infrastructure as code (IaC) to automate resource provisioning and management on Azure, enabling scalable and efficient cloud operations.</li>
+</ul>
+
+<h3 style="font-size: 18px; color: #333; font-weight: bold; margin-top: 20px;">Associate DevOps Engineer</h3>
+                <p><em>June 2024 – Oct 2024</em></p>
+<ul style="list-style-type: square; padding-left: 20px;">
+    <li><strong>Containerized Application Management:</strong> Streamlined deployment processes on <em>Azure</em> and <em>GCP</em> using <em>Ansible</em>, <em>Docker</em>, and <em>Kubernetes</em> to maximize scalability and efficiency.</li>
+    <li><strong>CI/CD Pipeline Development:</strong> Designed and implemented robust CI/CD pipelines with <em>Jenkins</em>, <em>GitLab CI</em>, <em>GitHub Actions</em>, and <em>CircleCI</em>, increasing release velocity and reducing manual efforts.</li>
+    <li><strong>System Monitoring and Observability:</strong> Established continuous monitoring frameworks with <em>Prometheus</em>, <em>Grafana</em>, and the <em>ELK Stack</em> to ensure system reliability and consistent uptime.</li>
+    <li><strong>Collaborative Development Workflows:</strong> Enhanced team collaboration and issue tracking through <em>Git</em>, <em>GitHub</em>, and <em>GitLab</em>, fostering a streamlined and productive development environment.</li>
+    <li><strong>Security and Compliance:</strong> Implemented stringent security protocols, including vulnerability scans and secure coding practices, to protect applications and ensure compliance.</li>
+    <li><strong>Advanced DevOps Practices:</strong> Applied extensive DevOps expertise to improve automation, optimize cloud infrastructure, and refine deployment strategies within a multi-cloud environment.</li>
+</ul>
+
+</div>
+
+         <hr>
+         <section id="skills"></section>
+       </section>
+<!-- Skills and Tools -->
+<div class="row skills" style="margin-bottom: 20px;">
+    <div class="three columns header-col">
+        <h1><span>&#x1F527; Skills</span></h1>
+    </div>
+
+    <div class="nine columns main-col" style="color: #585858; margin-right: 0px;">
+        <ul class="skills-list">
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                    }
+                    ul {
+                        list-style-type: none;
+                        padding-left: 0;
+                    }
+                    li {
+                        opacity: 0;
+                        animation: fadeIn 2s forwards, slideIn 1s ease-out forwards;
+                        animation-delay: calc(var(--fade-order) * 0.3s);
+                        transform: translateX(-50px);
+                    }
+                    @keyframes fadeIn {
+                        to {
+                            opacity: 1;
+                        }
+                    }
+                    @keyframes slideIn {
+                        to {
+                            transform: translateX(0);
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <ul style="list-style-type: square; padding-left: 20px; margin-right: 10px;">
+                    <li style="--fade-order: 1; margin-bottom: 8px;"><strong>Configuration Management:</strong> 🛠️ Ansible</li>
+                    <li style="--fade-order: 2; margin-bottom: 8px;"><strong>Cloud Platforms:</strong> 🌥️
+                        <ul style="list-style-type: circle; padding-left: 20px; margin-right: 10px;">
+                        <li><span style="font-size: 0.6em; vertical-align: middle; position: relative; top: -1px;">🔵</span><strong> Azure:</strong> Azure Virtual Machines (VMs), Azure App Service, SQL Database, Azure Blob Storage, Azure Functions, Azure DevOps, Azure Monitor, Azure Active Directory, Azure Front Door</li>
+                        <li><span style="font-size: 0.6em; vertical-align: middle; position: relative; top: -1px;">🟠</span><strong> AWS:</strong> Amazon EC2, Amazon S3, AWS Lambda, Amazon DynamoDB, AWS CloudFront, AWS IAM, AWS CloudFormation, Amazon Route 53, AWS CloudWatch</li>
+                    </ul>
+                    </li>
+                    <li style="--fade-order: 3; margin-bottom: 8px;"><strong>Version Control Systems 📃 :</strong> Git, GitHub, 🦊 GitLab</li>
+                    <li style="--fade-order: 4; margin-bottom: 8px;"><strong>Containerization & Orchestration 🌐 :</strong> Docker, Podman, Kubernetes, Apptainer</li>
+                    <li style="--fade-order: 5; margin-bottom: 8px;"><strong>CI/CD Pipelines 🚀 :</strong> Jenkins, GitLab CI/CD, GitHub Actions, CircleCI, Argo CD</li>
+                    <li style="--fade-order: 6; margin-bottom: 8px;"><strong>Container Registries 🏢 :</strong> Harbor Registry, Docker Private Registry, Helm</li>
+                    <li style="--fade-order: 7; margin-bottom: 8px;"><strong>Infrastructure as Code (IaC) ⚙️ :</strong> Terraform (provisioning and managing resources on Azure)</li>
+                    <li style="--fade-order: 8; margin-bottom: 8px;"><strong>Monitoring & Visualization 📊 :</strong> Prometheus, Grafana, ELK, 🐾 Datadog, 🛡️ Sensu</li>
+                    <li style="--fade-order: 9; margin-bottom: 8px;"><strong>Operating Platforms 🖥️ :</strong> Ubuntu, Alma Linux, Linux Mint, CentOS, Windows (WSL)</li>
+                    <li style="--fade-order: 10; margin-bottom: 8px;"><strong>Scripting & Automation 📜 :</strong> Bash, Crontab, Python</li>
+                    <li style="--fade-order: 11; margin-bottom: 8px;"><strong>MLOps & AI 🧠 🤖 :</strong> MLOps Practices, Deploying and Managing Large Language Models (LLMs), Qwen Deployment, Model Monitoring (e.g., for LLMs)</li>
+                    <li style="--fade-order: 12; margin-bottom: 8px;"><strong>Soft Skills 🤝 💡 :</strong> Collaboration & Communication, Adaptability, Problem-Solving, Time Management, Task Prioritization</li>
+                </ul>
+                
+
+         </body>
+         </html>
+         
+      <section id="Education"></section>
+  </div>
+</div>
+
+<hr>
+
+<!-- Education -->
+<div class="row education" style="margin-bottom: 20px;">
+   <div class="three columns header-col">
+      <h1><span>&#x1F393; Education</span></h1>
+   </div>
+
+   <div class="nine columns main-col" style="color: rgb(99, 99, 99);">
+<ul style="list-style-type: square; padding-left: 30px;">
+         <li>
+            <strong>M.A. in English</strong> - University of Gujrat, <strong>2018 – 2021</strong><br>
+            Developed advanced skills in <strong>literary analysis, critical thinking, and academic writing</strong>.
+         </li>
+      </ul>
+   </div>
+
+<hr>
+
+<!-- Courses and Certifications -->
+<div class="row courses" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+    <!-- Left Column for Heading and Badges -->
+    <div class="three columns header-col" style="text-align: center;">
+       <h1 style="margin-bottom: 15px;"><span>&#x1F4DC; Certifications</span></h1> <!-- Increased bottom margin -->
+       
+       <!-- CCNA Badge (Slightly Lower and Smaller) -->
+       <img src="images/CCNA-200-301.png" 
+            alt="CCNA 200-301 Badge" 
+            style="width: 110px; height: auto; margin-bottom: 10px; margin-top: 10px;"> <!-- Reduced size by 10px, moved lower -->
+
+       <!-- Azure Badge (Lower Side) -->
+       <img src="images/Azure-104.png" 
+            alt="Azure Administrator Associate Badge" 
+            style="width: 120px; height: auto; margin-top: 20px;"> <!-- Adjusted spacing -->
+    </div>
+ 
+    <!-- Right Column for Certifications -->
+    <div class="nine columns main-col" style="color: rgb(90, 90, 90); position: relative;">
+       <ul style="list-style-type: square; padding-left: 30px;">
+          <li><strong>DevOps and Cloud Management</strong> - Adan IT Center, <strong>Nov 2023 - June 2024</strong><br>
+             Gained expertise in <strong>automation, CI/CD pipelines, container orchestration, and cloud infrastructure management</strong>, with hands-on experience in implementing DevOps practices.
+          </li>
+          <li><strong>Certificate in CCNA</strong> - Adan IT Center, <strong>2024</strong><br>
+             Acquired knowledge in <strong>networking fundamentals, routing and switching, and network security</strong>.
+          </li>
+          <li>
+             <strong>Microsoft Certified: Azure Administrator Associate (AZ-104)</strong> - Feb <strong>2025</strong><br>
+             Successfully passed the <strong>AZ-104</strong> exam, demonstrating expertise in <strong>Azure administration, virtual networking, identity management, and security</strong>.<br>
+             <a href="https://learn.microsoft.com/en-us/users/sakib-mirza/credentials/9f466744861d1292" 
+                target="_blank" style="color: #0078D4; font-weight: bold; text-decoration: none;">
+                View Certification &#x1F517;
+             </a>
+          </li>
+       </ul>
+
+       <!-- Cloud Badge (Exactly Right Side and Centered) -->
+       <img src="images/Cloud.png" 
+            alt="Cloud Certification Badge" 
+            style="position: absolute; right: -150px; top: 50%; transform: translateY(-50%); width: 140px; height: auto;">
+    </div>
+</div>
+
+<hr>
+
+<!-- Languages Section -->
+<div class="row languages" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+    <!-- Left Column for Heading -->
+    <div class="three columns header-col" style="text-align: center;">
+       <h1 style="margin-bottom: 15px;"><span>&#x1F30D; Languages</span></h1> <!-- Changed icon to Globe 🌍 -->
+   </div>
+
+   <div class="nine columns main-col" style="color: rgb(90, 90, 90);">
+      <ul style="list-style-type: square; padding-left: 35px;">
+         <li><strong>Proficient in:</strong> English, Urdu</li>
+      </ul>
+   </div>
+</div>
+
+
+<hr>
+
+<!-- Blog Section -->
+
+<div class="row blog" style="margin-bottom: 20px;">
+   <div class="three columns header-col">
+      <h1><span>&#x1F4DD; CRC Challenge</span></h1>
+   </div>
+
+   <div class="nine columns main-col" style="color: rgb(90, 90, 90);">
+    <ul style="list-style-type: circle; padding-left: 30px;">
+      <p><strong>How I Tackled the Cloud Resume Challenge on Azure. A Journey from Code to Cloud:</strong></p>
+      <p><a href="https://medium.com/@SAkib-MirzA/how-i-completed-the-cloud-resume-challenge-using-azure-f5038eb81de8" target="_blank" style="text-decoration: none; color: #3498db;">Read the full article on Medium</a></p>
+
+    </div>
+</div>
+
+
+</section>
+
+<!-- Portfolio Section -->
+<section id="portfolio">
+
+    <div class="row">
+ 
+       <div class="twelve columns collapsed">
+ 
+          <h1>In progress...</h1>
+ 
+          <!-- Portfolio Wrapper -->
+          <div id="portfolio-wrapper" class="bgrid-quarters s-bgrid-thirds cf">
+ 
+            <!-- Portfolio Items -->
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-01" title="">
+                      <img alt="" src="images/portfolio/Prometheus+Grafana.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Prometheus+Grafana</h5>
+                            <p>Illustration</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-02" title="">
+                      <img alt="" src="images/portfolio/Elasticsearch.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Elasticsearch</h5>
+                            <p>Web Development</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-03" title="">
+                      <img alt="" src="images/portfolio/Datadog+Sensu.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Datadog+Sensu</h5>
+                            <p>Webdesign</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-04" title="">
+                      <img alt="" src="images/portfolio/Azure+AWS.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Azure+AWS</h5>
+                            <p>Photography</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-05" title="">
+                      <img alt="" src="images/portfolio/farmerboy.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Farmer Boy</h5>
+                            <p>Branding</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-06" title="">
+                      <img alt="" src="images/portfolio/Travel.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Travel</h5>
+                            <p>Photography</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-07" title="">
+                      <img alt="" src="images/portfolio/origami.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Origami</h5>
+                            <p>Illustration</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+            <div class="columns portfolio-item">
+                <div class="item-wrap">
+                   <a href="#modal-08" title="">
+                      <img alt="" src="images/portfolio/retrocam.jpg">
+                      <div class="overlay">
+                         <div class="portfolio-item-meta">
+                            <h5>Retrocam</h5>
+                            <p>Web Development</p>
+                         </div>
+                      </div>
+                      <div class="link-icon"><i class="icon-plus"></i></div>
+                   </a>
+                </div>
+            </div> <!-- item end -->
+
+          </div> <!-- Portfolio Wrapper End -->
+ 
+       </div> <!-- Twelve Columns End -->
+ 
+    </div> <!-- Row End -->
+
+          <!-- Modal Popup
+	      --------------------------------------------------------------- -->
+
+          <div id="modal-01" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/Prometheus+Grafana.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Prometheus+Grafana</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Branding, Webdesign</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-01 End -->
+
+       <div id="modal-02" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/Elasticsearch.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Elasticsearch+Logstash+Kibana</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Branding, Web Development</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-02 End -->
+
+       <div id="modal-03" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/Datadog+Sensu.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Datadog+Sensu</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Branding</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-03 End -->
+
+       <div id="modal-04" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/Azure+AWS.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Into the Light</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Photography</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-04 End -->
+
+       <div id="modal-05" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/m-farmerboy.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Farmer Boy</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Branding, Webdesign</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-05 End -->
+
+       <div id="modal-06" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/Travel.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Travel</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Photography</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-06 End -->
+
+       <div id="modal-07" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/m-origami.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Origami</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Branding, Illustration</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-07 End -->
+
+       <div id="modal-08" class="popup-modal mfp-hide">
+
+            <img class="scale-with-grid" src="images/portfolio/modals/m-retrocam.jpg" alt="" />
+
+            <div class="description-box">
+                <h4>Retrocam</h4>
+                <p>Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.</p>
+             <span class="categories"><i class="fa fa-tag"></i>Webdesign, Photography</span>
+            </div>
+
+          <div class="link-box">
+             <a href="http://www.behance.net" target="_blank">Details</a>
+               <a class="popup-modal-dismiss">Close</a>
+          </div>
+
+        </div><!-- modal-01 End -->
+
+
+    </div> <!-- row End -->
+
+ </section> <!-- Portfolio Section End-->
+
+   <!-- DevOps Wisdom Section
+   ================================================== -->
+   <section id="testimonials">
+
+    <div class="text-container">
+
+       <div class="row">
+
+          <div class="two columns header-col">
+
+             <h1><span>Client Testimonials</span></h1>
+
+          </div>
+
+          <div class="ten columns flex-container">
+
+             <div class="flexslider">
+
+                <ul class="slides">
+
+                   <li>
+                      <blockquote>
+                        <p>DevOps is not a goal, but a never-ending process of continual improvement.</p>
+                        <p>It is about culture, automation, and measurement.</p>
+                        <p>Embrace change, automate everything, and continuously improve.</p>
+                         <cite>Jez Humble</cite>
+                      </blockquote>
+                   </li> <!-- slide ends -->
+
+                   <li>
+                    <blockquote>
+                        <p>"DevOps is not just about tools; it’s about transforming the culture of the organization." - Kelsey Hightower</p>
+                        <p>"DevOps is a culture, not a technology. It’s a mindset of collaboration and continuous improvement." - Andrew Shafer</p>
+                        <p>"DevOps is the union of people, process, and products to enable continuous delivery of value to the end users." - Mik Kersten</p>                        
+                    </blockquote>
+                 </li> <!-- slide ends -->
+
+                   <li>
+                      <blockquote>
+                        <p>"DevOps is about breaking down the silos between development and operations teams." - Damon Edwards</p>
+                        <p>"The goal of DevOps is to improve collaboration between developers and operations and improve the quality of software." - Nicole Forsgren</p>
+                        <p>"DevOps is about creating a culture where everyone is responsible for everything." - John Willis</p>                        
+                      </blockquote>
+                   </li> <!-- slide ends -->
+
+                </ul>
+
+             </div> <!-- div.flexslider ends -->
+
+          </div> <!-- div.flex-container ends -->
+
+       </div> <!-- row ends -->
+
+     </div>  <!-- text-container ends -->
+
+ </section> <!-- Testimonials Section End-->
+
+   <!-- footer
+   ================================================== -->
+   <footer>
+
+      <div class="row">
+
+         <div class="twelve columns">
+
+            <ul class="social-links">
+               <!-- <li><a href="https://twitter.com/madebygps"><i class="fa fa-twitter"></i></a></li> -->
+               <li><a href="https://www.linkedin.com/in/saqib-muniir/"><i class="fa fa-linkedin"></i></a></li>
+               <!-- <li><a href="https://madebygps.com"><i class="fa fa-external-link"></i></a></li> -->
+               <!-- <li><a href="https://instagram.com/madebygps"><i class="fa fa-instagram"></i></a></li> -->
+               <!-- <li><a href="https://youtube.com/madebygps"><i class="fa fa-youtube"></i></a></li> -->
+               <li><a href="https://github.com/SAkib-MiirzA"><i class="fa fa-github"></i></a></li>
+            </ul>
+<!--             <div id="visitor-container"></div><script src="visitor-counter.js"></script> -->
+
+            <ul class="copyright">
+            
+               <li style="color: rgb(121, 109, 109);">&copy; SAkib MirzA | All Rights Reserved | 2025</li>
+
+         </div>
+
+         <div id="go-top"><a class="smoothscroll" title="Back to Top" href="#home"><i class="icon-up-open"></i></a></div>
+
+        </footer> <!-- Footer End-->
+      
+
+   <!-- Java Script
+   ================================================== -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+   <script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js"><\/script>')</script>
+   <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+
+   <script src="js/jquery.flexslider.js"></script>
+   <script src="js/waypoints.js"></script>
+   <script src="js/jquery.fittext.js"></script>
+   <script src="js/magnific-popup.js"></script>
+   <script src="js/init.js"></script>
+
+<script>
+    // This script sets the current year dynamically
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+   
